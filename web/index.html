@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f4ee">
+  <title>SmartPlant · 智能浇花</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span>SmartPlant<small>S3 本地浇花控制台</small></span></div>
+      <nav aria-label="主导航">
+        <a href="#dashboard" class="active">概览</a><a href="#history">历史</a><a href="#watering">浇水</a>
+        <a href="#automation">自动化</a><a href="#sensor">传感器</a><a href="#settings">设置</a>
+      </nav>
+      <div class="side-foot"><span id="connection-dot" class="dot"></span><span id="connection-label">正在连接设备</span></div>
+    </aside>
+    <main>
+      <header class="topbar"><div><span class="overline">我的设备 / <span id="device-name-top">SmartPlant</span></span><h1 id="page-title">植物概览</h1></div><span id="top-time">本地设备</span></header>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <section id="dashboard" class="page active" aria-label="概览">
+        <div class="dashboard-grid">
+          <div class="soil-panel">
+            <div class="panel-heading"><span>土壤湿度</span><span id="soil-state" class="tag">读取中</span></div>
+            <div class="soil-reading"><strong id="soil-value">--</strong><span>%</span></div>
+            <div class="soil-track"><span id="soil-fill"></span><i id="low-marker"></i><i id="target-marker"></i></div>
+            <div class="soil-scale"><span>干燥</span><span>适宜</span><span>湿润</span></div>
+            <p id="soil-caption">正在读取传感器…</p>
+          </div>
+          <div class="quick-panel"><div class="panel-heading"><span>现在</span><span id="live-time"></span></div>
+            <div class="quick-row"><span>水泵</span><strong id="pump-state">--</strong></div>
+            <div class="quick-row"><span>水箱</span><strong id="tank-state">--</strong></div>
+            <div class="quick-row"><span>自动浇水</span><strong id="auto-state">--</strong></div>
+            <div class="quick-row"><span>今日自动浇水</span><strong id="today-count">--</strong></div>
+            <div class="quick-actions"><button type="button" class="primary" data-water="3">浇水 3 秒</button><button type="button" class="secondary stop" data-stop>立即停止</button></div>
+          </div>
+        </div>
+        <div class="watering-plan">
+          <div><span>最近一次自动浇水</span><strong id="auto-last-time">--</strong></div>
+          <div><span>距离下次允许浇水</span><strong id="auto-countdown">--</strong><small id="auto-next-time"></small></div>
+          <p id="auto-plan-hint">正在读取自动浇水计划…</p>
+        </div>
+        <div class="summary-strip"><div><span>启动阈值</span><strong id="summary-low">--%</strong></div><div><span>目标湿度</span><strong id="summary-target">--%</strong></div><div><span>Wi-Fi 信号</span><strong id="summary-rssi">--</strong></div><div><span>运行时间</span><strong id="summary-uptime">--</strong></div></div>
+        <div class="section-head"><h2>最近记录</h2><a href="#history">查看全部 →</a></div><div id="recent-events" class="event-list"><p class="empty">暂无记录</p></div>
+      </section>
+      <section id="history" class="page" aria-label="历史"><div class="section-head"><div><h2>湿度历史</h2><p>设备每分钟记录一次，并标注浇水事件。</p></div><select id="history-range" aria-label="历史范围"><option value="24">最近 24 小时</option><option value="168">最近 7 天</option><option value="720">最近 30 天</option></select></div><div class="chart-wrap"><svg id="history-chart" viewBox="0 0 760 300" role="img" aria-label="土壤湿度趋势图"></svg><p id="history-empty" class="empty">暂无历史数据。设备运行一段时间后将在这里显示。</p></div><p id="history-summary" class="hint" role="status">正在读取历史记录…</p><h3>浇水事件</h3><div id="history-events" class="event-list"></div></section>
+      <section id="watering" class="page" aria-label="浇水"><div class="section-head"><div><h2>手动浇水</h2><p>水位仅显示，缺水锁定关闭，每次连续浇水最长 10 秒。</p></div></div><div class="control-panel"><div class="control-status"><span>水泵当前状态</span><strong id="manual-pump-state">--</strong><small id="pump-remaining"></small></div><div class="duration-actions"><button type="button" class="primary" data-water="3">浇水 3 秒</button><button type="button" class="primary" data-water="5">浇水 5 秒</button><button type="button" class="primary" data-water="10">浇水 10 秒</button></div><button type="button" class="danger stop" data-stop>立即停止水泵</button></div></section>
+      <section id="automation" class="page" aria-label="自动化"><div class="section-head"><div><h2>自动浇水</h2><p>低于启动阈值时短时浇水，等待水分渗透后再检测。</p></div></div><form id="automation-form" class="form-panel"><label class="switch-row">启用自动浇水<input id="auto_enabled" name="auto_enabled" type="checkbox"><span class="switch"></span></label><div class="form-grid"><label>启动阈值 <small>低于此湿度时启动</small><span class="input-unit"><input name="soil_low" type="number" min="5" max="80" required><em>%</em></span></label><label>目标湿度 <small>用于判断土壤状态</small><span class="input-unit"><input name="soil_target" type="number" min="10" max="95" required><em>%</em></span></label><label>单次浇水 <small>每次水泵运行时长</small><span class="input-unit"><input name="pump_seconds" type="number" min="1" max="10" required><em>秒</em></span></label><label>渗透等待 <small>浇水后暂停检测</small><span class="input-unit"><input name="soak_seconds" type="number" min="10" max="600" required><em>秒</em></span></label><label>最短间隔 <small>两次自动浇水间隔</small><span class="input-unit"><input name="min_interval" type="number" min="5" max="1440" required><em>分钟</em></span></label><label>每日上限 <small>自动浇水最多次数</small><span class="input-unit"><input name="max_daily" type="number" min="1" max="20" required><em>次</em></span></label></div><button class="primary save" type="submit">保存自动化设置</button></form></section>
+      <section id="sensor" class="page" aria-label="传感器"><div class="section-head"><div><h2>传感器校准</h2><p>先让探头在干燥环境中取值，再放入充分湿润的土壤。</p></div></div><div class="calibration-grid"><div class="cal-card"><span>当前 ADC 读数</span><strong id="sensor-raw">--</strong><small id="sensor-valid">等待数据</small></div><div class="cal-card"><span>干燥基准</span><strong id="dry-adc">--</strong><button type="button" class="secondary" data-calibrate="dry">记录当前为干燥</button></div><div class="cal-card"><span>湿润基准</span><strong id="wet-adc">--</strong><button type="button" class="secondary" data-calibrate="wet">记录当前为湿润</button></div></div><p class="hint">校准时水泵不会自动运行；保存后请检查湿度百分比是否符合实际状态。</p><div class="form-panel"><h3>水位传感器</h3><div class="calibration-readout"><span>相对水位</span><strong id="water-valid">--</strong><small>ADC 原始值：<span id="water-raw">--</span></small></div><p>水位只显示，不限制水泵启动。百分比是条纹探头的相对浸入程度，不代表整个水箱的剩余容量。</p><div class="info-row"><span>空水校准</span><strong id="water-dry-adc">--</strong></div><div class="info-row"><span>满水校准</span><strong id="water-wet-adc">--</strong></div><div class="duration-actions"><button type="button" class="secondary" data-water-calibrate="dry">记录空水</button><button type="button" class="secondary" data-water-calibrate="wet">记录满水</button></div><p class="hint">探头只浸入条纹区，不超过板上水位线；两次校准 ADC 差值至少为 100。</p></div></section>
+      <section id="settings" class="page" aria-label="设置"><div class="section-head"><div><h2>设备设置</h2><p>网络与设备信息都保存在这台 ESP32 中。</p></div></div><div class="settings-grid"><form id="device-form" class="form-panel"><h3>设备</h3><label>设备名称<input name="name" maxlength="31" required></label><label>屏幕亮度<select name="brightness"><option value="100">开启</option><option value="0">关闭</option></select></label><button class="primary save" type="submit">保存设备设置</button></form><div class="form-panel"><h3>网络</h3><div class="info-row"><span>当前 Wi-Fi</span><strong id="wifi-ssid">--</strong></div><div class="info-row"><span>访问地址</span><strong id="wifi-ip">--</strong></div><div class="info-row"><span>本地域名</span><strong>smartplant.local</strong></div><form id="wifi-form"><label>选择网络<select id="wifi-list" name="ssid"><option value="">点击扫描网络</option></select></label><button type="button" id="scan-wifi" class="secondary">扫描 Wi-Fi</button><label>Wi-Fi 密码<input name="password" type="password" autocomplete="new-password"></label><button type="submit" class="primary">保存并连接</button></form></div></div></section>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

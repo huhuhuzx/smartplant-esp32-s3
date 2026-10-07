@@ -1,0 +1,38 @@
+# Generated builds and dependencies
+build/
+build_clean/
+main/build/
+managed_components/
+# Private local configuration
+sdkconfig
+sdkconfig.old
+sdkconfig.*.old
+.vscode/
+.env
+.env.*
+# Runtime data, diagnostics and test artifacts
+*.log
+*.bin
+*.elf
+*.map
+*.csv
+!partitions.csv
+__pycache__/
+*.pyc
+node_modules/
+tests/
+test/
+**/test_*
+**/check_*
+# Local planning documents and attachments
+AGENTS.md
+ESP32开发核心原则.md
+ESP32开发架构.md
+SmartPlant_V1.0_SPEC.pdf
+
+.local/
+.impeccable/
+
+# Internal design records
+DESIGN.md
+PRODUCT.md
